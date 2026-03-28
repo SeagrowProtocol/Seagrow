@@ -229,4 +229,25 @@
             document.getElementById('trial-banner').classList.add('hidden');
             document.getElementById('final-reward').innerText = reward.toLocaleString() + " $SEA";
             document.getElementById('rank-text').innerText = "ELITE PRO";
-            document.getElementById('rank
+            document.getElementById('rank-text').className = "text-xs font-black text-indigo-400 uppercase";
+            document.getElementById('ref-count').innerText = "0";
+            document.getElementById('ref-box-locked').classList.add('hidden');
+            document.getElementById('ref-box-unlocked').classList.remove('hidden');
+            document.getElementById('ref-link').value = `${window.location.href.split('?')[0]}?ref=${userAddress.slice(0, 6)}`;
+            showStep('step-mini');
+        }
+
+        function showStep(id) {
+            ['step-intro', 'step-deposit', 'step-mini'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function copyRef() {
+            const input = document.getElementById("ref-link"); input.select();
+            navigator.clipboard.writeText(input.value); alert("Referral Link Secured!");
+        }
+
+        window.onload = initBg;
+    </script>
+</body>
+</html>
